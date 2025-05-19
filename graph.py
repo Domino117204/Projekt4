@@ -52,6 +52,7 @@ class Graph:
         """Tworzy graf z nasyceniem 50%, ale nie hamiltonowski (izolując jeden wierzchołek)."""
         self.generate_hamiltonian_graph(saturation_percent=50)
 
+        # Izoluj losowy wierzchołek
         isolated = random.choice(list(self.adj.keys()))
         for neighbor in list(self.adj[isolated]):
             self.adj[neighbor].remove(isolated)
