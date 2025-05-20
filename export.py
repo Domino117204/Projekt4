@@ -33,8 +33,10 @@ def export_to_tex(graph, filename="graph.tex", directed=False):
         f.write("\n")
 
         for u, v in edges:
-            arrow = "->" if directed else "--"
-            f.write(f"\\draw[{arrow}] ({u}) {arrow} ({v});\n")
+            if directed:
+                f.write(f"\\draw[->] ({u}) -> ({v});\n")
+            else:
+                f.write(f"\\draw ({u}) -- ({v});\n")
 
         f.write("\\end{tikzpicture}\n")
         f.write("\\end{center}\n")
