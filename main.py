@@ -7,27 +7,36 @@ def main():
         print("Użycie: python main.py --hamilton | --non-hamilton")
         return
 
-    n = int(input("nodes> "))
-    if n <= 10:
-        print("Liczba wierzchołków musi być większa niż 10.")
-        return
+    while True:
+        try:
+            n = int(input("nodes> "))
+            if n <= 10:
+                print("Liczba wierzchołków musi być większa niż 10.")
+            else:
+                break
+        except ValueError:
+            print("Podaj poprawną liczbę całkowitą.")
 
+    graph = Graph(n)
     if sys.argv[1] == '--hamilton':
-        saturation = int(input("saturation (30 or 70)> "))
-        if saturation not in [30, 70]:
-            print("Saturacja musi być 30 lub 70.")
-            return
-        graph = Graph(n)
-        graph.generate_hamiltonian_graph(saturation_percent=saturation)
+        while True:
+            try:
+                saturation = int(input("saturation (30 or 70)> "))
+                if saturation not in [30, 70]:
+                    print("Saturacja musi być 30 lub 70.")
+                else:
+                    graph.generate_hamiltonian_graph(saturation_percent=saturation)
+                    break
+            except ValueError:
+                print("Podaj poprawną liczbę całkowitą.")
     else:
-        graph = Graph(n)
         graph.generate_non_hamiltonian_graph()
 
     while True:
         print("\nWybierz operację:")
         print("1. Wypisanie grafu (lista sąsiedztwa)")
         print("2. Znalezienie cyklu Eulera")
-        print("3. Znalezienie cyklu Hamiltona (powracanie)")
+        print("3. Znalezienie cyklu Hamiltona")
         print("4. Eksport do LaTeX")
         print("5. Wyjście")
         choice = input("> ")
@@ -39,7 +48,7 @@ def main():
             if cycle:
                 print("Cykl Eulera:", cycle)
             else:
-                print("Brak cyklu Eulera (graf nie jest eulerowski).")
+                print("Brak cyklu Eulera.")
         elif choice == "3":
             cycle = graph.find_hamilton_cycle()
             if cycle:
