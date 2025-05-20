@@ -3,7 +3,7 @@ from graph import Graph
 from export import export_to_tex
 
 def main():
-    if len(sys.argv) < 2 or sys.argv[1] not in ['--hamilton', '--non-hamilton']:
+    if len(sys.argv) < 2 or sys.argv[1] not in ['--hamilton', '--non-hamilton'] or len(sys.argv) >= 3:
         print("Użycie: python main.py --hamilton | --non-hamilton")
         return
 
@@ -19,13 +19,39 @@ def main():
             return
         graph = Graph(n)
         graph.generate_hamiltonian_graph(saturation_percent=saturation)
-
-    elif sys.argv[1] == '--non-hamilton':
+    else:
         graph = Graph(n)
         graph.generate_non_hamiltonian_graph()
 
-    graph.print_graph()
-    export_to_tex(graph, "graph_output.tex")
+    while True:
+        print("\nWybierz operację:")
+        print("1. Wypisanie grafu (lista sąsiedztwa)")
+        print("2. Znalezienie cyklu Eulera")
+        print("3. Znalezienie cyklu Hamiltona (powracanie)")
+        print("4. Eksport do LaTeX")
+        print("5. Wyjście")
+        choice = input("> ")
+
+        if choice == "1":
+            graph.print_graph()
+        elif choice == "2":
+            cycle = graph.find_euler_cycle()
+            if cycle:
+                print("Cykl Eulera:", cycle)
+            else:
+                print("Brak cyklu Eulera (graf nie jest eulerowski).")
+        elif choice == "3":
+            cycle = graph.find_hamilton_cycle()
+            if cycle:
+                print("Cykl Hamiltona:", cycle)
+            else:
+                print("Brak cyklu Hamiltona.")
+        elif choice == "4":
+            export_to_tex(graph)
+        elif choice == "5":
+            break
+        else:
+            print("Nieprawidłowy wybór.")
 
 if __name__ == "__main__":
     main()
