@@ -1,6 +1,6 @@
 import math
 
-def export_to_tex(graph, filename="graph.tex", directed=False):
+def export_to_tex(graph, filename="graph.tex"):
     if graph.n == 0:
         print("Graf jest pusty, eksport przerwany.")
         return
@@ -8,7 +8,7 @@ def export_to_tex(graph, filename="graph.tex", directed=False):
     edges = set()
     for u in range(1, graph.n + 1):
         for v in graph.adj[u]:
-            if directed or (v, u) not in edges:
+            if (v, u) not in edges:
                 edges.add((u, v))
 
     with open(filename, "w") as f:
@@ -33,10 +33,7 @@ def export_to_tex(graph, filename="graph.tex", directed=False):
         f.write("\n")
 
         for u, v in edges:
-            if directed:
-                f.write(f"\\draw[->] ({u}) -> ({v});\n")
-            else:
-                f.write(f"\\draw ({u}) -- ({v});\n")
+            f.write(f"\\draw ({u}) -- ({v});\n")
 
         f.write("\\end{tikzpicture}\n")
         f.write("\\end{center}\n")
