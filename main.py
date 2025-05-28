@@ -33,7 +33,7 @@ def main():
         graph.generate_non_hamiltonian_graph()
 
     while True:
-        print("\nWybierz operację:")
+        print("\nWybierz operację (podaj numer):")
         print("1. Wypisanie grafu (lista sąsiedztwa)")
         print("2. Znalezienie cyklu Eulera")
         print("3. Znalezienie cyklu Hamiltona")
