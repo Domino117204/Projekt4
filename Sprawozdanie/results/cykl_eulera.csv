@@ -1,0 +1,4 @@
+Algorithm,InputSize,Time
+Euler,256,0.00285
+Euler,512,0.01328
+Euler,1024,0.06436
