@@ -41,7 +41,7 @@ class Graph:
                         break
 
     def generate_non_hamiltonian_graph(self):
-        self.generate_hamiltonian_graph(saturation_percent=50)
+        self.generate_hamiltonian_graph(saturation_percent=30)
         # Izoluj ostatni wierzchołek
         isolated = self.n
         for neighbor in list(self.adj[isolated]):
