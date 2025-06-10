@@ -3,7 +3,6 @@
 \usepackage[T1]{fontenc}
 \usepackage[polish]{babel}
 \usepackage{geometry}
-\usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{lmodern}
 \usepackage{float}
@@ -24,7 +23,7 @@
 
 
 \pgfplotsset{
-	width=10cm, height=6cm, ymin=0, xmin=32, xmax=4096, grid=both,
+	width=10cm, height=6cm, ymin=0, xmin=50, xmax=200, grid=both,
 	xticklabel style={rotate=45, anchor=near xticklabel},
 	x label style={at={(axis description cs:0.5,-0.025)}},
 }
@@ -120,50 +119,42 @@
 				\begin{axis}[%
 					name=plotA, anchor=left of south west,
 					width=10cm, height=4cm,
-					title={Złożoność Obliczeniowa - Find}, 
+					title={Złożoność Obliczeniowa znajdowania cyklu}, 
 					xlabel={Rozmiar instancji}, ylabel={Czas (ms)}, legend pos=north west,
 					xmode=log, log basis x={2},
 					every axis plot post/.style={very thick},
 					]
-					\addplot[red, dashed, smooth] table[x=nodes,y=time,col sep=comma] {results/find_matrix.csv};
-					\addplot[green, dashed, smooth] table[x=nodes,y=time,col sep=comma] {results/find_table.csv};
-					\addplot[blue, dotted, smooth] table[x=nodes,y=time,col sep=comma] {results/find_list.csv};
-					\legend{Matrix, Table, List}
+					\addplot[red, dashed, smooth] table[x=n,y=time,col sep=comma] {results/czasy_euler.csv};
+					\addplot[green, dashed, smooth] table[x=n,y=time,col sep=comma] {results/czasy_hamilton.csv};
+					\legend{Euler, Hamilton}
 				\end{axis}
 				
 				\begin{axis}[%
-					title={Złożoność Obliczeniowa - Kahn}, 
+					title={Złożoność Obliczeniowa grafu nie-hamiltonowskiego znajdowania cyklu}, 
 					width=10cm, height=4cm,
 					name=plotB, at=(plotA.below south west), anchor=above north west,
 					xlabel={Rozmiar instancji}, ylabel={Czas (ms)}, legend pos=north west,
-					xmode=log, log basis x={2},
-					every axis plot post/.style={very thick},
+					every axis plot post/.style={very thick}, xmin=20, xmax=30, xtick distance=5,
 					]
-					\addplot[red, dashed, smooth] table[x=nodes,y=time,col sep=comma] {results/kahn_matrix.csv};
-					\addplot[green, dashed, smooth] table[x=nodes,y=time,col sep=comma] {results/kahn_table.csv};
-					\addplot[blue, dotted, smooth] table[x=nodes,y=time,col sep=comma] {results/kahn_list.csv};
-					\legend{Matrix, Table, List}
+					\addplot[red, dashed, smooth] table[x=n,y=time,col sep=comma] {results/czasy_niehamilton.csv};
+					\legend{Hamilton}
 				\end{axis}
 				
-				\begin{axis}[%
-					title={Złożoność Obliczeniowa - Tarjan}, 
-					width=10cm, height=4cm,
-					name=plotC, at=(plotB.below south west), anchor=above north west,
-					xlabel={Rozmiar instancji}, ylabel={Czas (ms)}, legend pos=north west,
-					xmode=log, log basis x={2},
-					every axis plot post/.style={very thick},
-					]
-					\addplot[red, dashed, smooth] table[x=nodes,y=time,col sep=comma] {results/tarjan_matrix.csv};
-					\addplot[green, dashed, smooth] table[x=nodes,y=time,col sep=comma] {results/tarjan_table.csv};
-					\addplot[blue, dotted, smooth] table[x=nodes,y=time,col sep=comma] {results/tarjan_list.csv};
-					\legend{Matrix, Table, List}
-				\end{axis}
 			\end{tikzpicture}
 		}
-		\caption{Porównanie czasów wykonania dla 3 operacji i 3 reprezentacji grafów}
+		\caption{Porównanie czasów wykonania dla 3 operacji}
 	\end{figure}
 	
 	%\subsection*{Podsumowanie}
 	\section*{\textcolor{blue}{Wnioski}}
+	Na podstawie przedstawionych wykresów można wyciągnąć następujące wnioski:
+	
+	\begin{itemize}
+		\item Algorytm znajdowania cyklu Eulera działa bardzo efektywnie – jego czas wykonania jest praktycznie zerowy niezależnie od rozmiaru instancji. Jest to zgodne z teorią, ponieważ problem znajdowania cyklu Eulera należy do klasy P i może być rozwiązany w czasie liniowym względem liczby krawędzi.
+		
+		\item Algorytm znajdowania cyklu Hamiltona wykazuje znacznie większą złożoność czasową. Czas wykonania silnie zależy od rozmiaru instancji i waha się w sposób nieregularny, co jest charakterystyczne dla problemów NP-trudnych. Dla większych instancji czas rośnie dynamicznie, co potwierdza jego praktyczną nieefektywność.
+		
+		\item W przypadku grafu nie-hamiltonowskiego, czas wykonania pozostaje stały niezależnie od rozmiaru instancji, co może oznaczać wcześniejsze zakończenie algorytmu po stwierdzeniu braku ścieżki Hamiltona.
+	\end{itemize}
 	
 \end{document}
