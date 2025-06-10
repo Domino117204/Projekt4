@@ -1,0 +1,96 @@
+\documentclass[a4paper,12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{polski}
+\usepackage{amsmath, amssymb}
+\usepackage{graphicx}
+\usepackage{tikz}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{hyperref}
+\usepackage{geometry}
+\geometry{margin=2.5cm}
+
+\title{Sprawozdanie -- Projekt 4: Algorytmy z powracaniem}
+\author{Laboratoria Algorytmów i Struktur Danych}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Cel projektu}
+Celem projektu było zaimplementowanie programu obsługującego grafy nieskierowane w dwóch trybach:
+\begin{itemize}
+    \item generowania grafów Hamiltonowskich o zadanym nasyceniu (30\% i 70\%),
+    \item generowania grafów nie-Hamiltonowskich o nasyceniu 50\%.
+\end{itemize}
+Na tych grafach wykonywano operacje:
+\begin{itemize}
+    \item wypisania grafu,
+    \item wyszukiwania cyklu Eulera,
+    \item wyszukiwania cyklu Hamiltona (algorytm z powracaniem),
+    \item eksportu grafu do formatu LaTeX (TikZ).
+\end{itemize}
+
+\section{Reprezentacja grafu}
+Graf został zaimplementowany jako słownik sąsiedztwa \texttt{dict[int, set[int]]}. Reprezentacja ta została wybrana ze względu na:
+
+\begin{itemize}
+    \item szybki dostęp do sąsiadów wierzchołka (czas stały),
+    \item łatwe dodawanie i usuwanie krawędzi,
+    \item prostotę implementacji algorytmów przeszukiwania.
+\end{itemize}
+
+\section{Generowanie grafów}
+\subsection{Tryb Hamiltonowski}
+Tworzony jest losowy cykl Hamiltona obejmujący wszystkie $n$ wierzchołków. Następnie dodawane są krawędzie w losowych trójkątach, aż do osiągnięcia zadanej gęstości. Zapewniono parzysty stopień każdego wierzchołka (co jest warunkiem koniecznym dla istnienia cyklu Eulera).
+
+\subsection{Tryb Nie-Hamiltonowski}
+Tworzony jest graf Hamiltonowski (50\% nasycenia), po czym ostatni wierzchołek zostaje odizolowany, eliminując możliwość istnienia cyklu Hamiltona.
+
+\section{Operacje na grafie}
+Program umożliwia użytkownikowi:
+\begin{enumerate}
+    \item wypisanie listy sąsiedztwa,
+    \item sprawdzenie istnienia cyklu Eulera (algorytm Hierholzera),
+    \item wyszukiwanie cyklu Hamiltona (algorytm z powracaniem z ograniczeniem czasowym),
+    \item eksport grafu do LaTeX (TikZ).
+\end{enumerate}
+
+\section{Testy i benchmarki}
+\subsection{Grafy Hamiltonowskie}
+Wygenerowano grafy o liczbie wierzchołków od 50 do 200 (co 10), dla nasycenia 30\%. Zmierzono czas działania algorytmu Eulera i Hamiltona. Wyniki zapisano do \texttt{czasy\_euler.csv} i \texttt{czasy\_hamilton.csv}.
+
+\subsection{Grafy Nie-Hamiltonowskie}
+Wygenerowano grafy o $n = 20, 25, 30$. Zmierzono czas działania algorytmu Hamiltona i zapisano do \texttt{czasy\_niehamilton.csv}.
+
+\section{Wykresy}
+\begin{itemize}
+    \item Wykres 1: czas działania algorytmu cyklu Eulera ($t=f(n)$),
+    \item Wykres 2: czas działania algorytmu Hamiltona dla grafów Hamiltonowskich,
+    \item Wykres 3: czas działania algorytmu Hamiltona dla grafów nie-Hamiltonowskich.
+\end{itemize}
+
+\section{Obserwacje}
+\begin{itemize}
+    \item Algorytm Eulera działa bardzo szybko i jego złożoność czasowa jest liniowa względem liczby krawędzi.
+    \item Algorytm Hamiltona działa znacznie wolniej, dla dużych grafów czas działania znacząco rośnie.
+    \item Dla grafów nie-Hamiltonowskich algorytm nie znajduje cyklu i zużywa pełny limit czasu.
+\end{itemize}
+
+\section{Eksport grafów do LaTeX}
+Program umożliwia eksport wygenerowanego grafu do pliku \texttt{.tex} z użyciem środowiska \texttt{tikzpicture}. Grafy są rozmieszczane na okręgu o stałym promieniu dla zachowania przejrzystości.
+
+\section{Staranność wykonania}
+Kod spełnia zalecenia:
+\begin{itemize}
+    \item czytelne nazwy zmiennych,
+    \item brak duplikacji kodu,
+    \item modularność (\texttt{main.py}, \texttt{graph.py}, \texttt{export.py}, \texttt{benchmark.py}),
+    \item komentarze w kluczowych miejscach.
+\end{itemize}
+
+\section{Wnioski}
+Projekt realizuje operacje na grafach z uwzględnieniem algorytmów klasy NP-trudnych (cykl Hamiltona) i liniowych (cykl Eulera). Efektywność algorytmów zależy od struktury grafu oraz nasycenia. Algorytmy z powracaniem są niepraktyczne dla dużych grafów bez heurystyk ograniczających przestrzeń przeszukiwań.
+
+\end{document}

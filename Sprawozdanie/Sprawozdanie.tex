@@ -107,8 +107,723 @@
 	%\subsection*{Wprowadzenie}
 	\titleformat{\section}{\Huge\bfseries}{\thesection}{2em}{}
 	\section*{\textcolor{blue}{Wprowadzenie}}
+	Celem niniejszego projektu było zaimplementowanie programu tworzącego i obsługującego grafy nieskierowane w dwóch postaciach:
+	\begin{itemize}
+		\item graf Hamiltonowski o wybranym nasyceniu (30\% lub 70\%),
+		\item graf Nie-hamiltonowski o nasyceniu 50\%.
+	\end{itemize}
+	Na danych grafach wykonywano operacje:
+	\begin{itemize}
+		\item wypisania grafu,
+		\item wyszukiwania cyklu Eulera,
+		\item wyszukiwania cyklu Hamiltona z użyciem algorytmu z powracaniem,
+		\item eksportu grafu do formatu LaTeX.
+	\end{itemize}
 	
-	 
+	\section*{\textcolor{blue}{Reprezentacja grafu}}
+	Jako reprezentację grafu wybraliśmy listę sąsiedztwa i zaimplementowaliśmy ją w formie słownika ze względu na:
+	\begin{itemize}
+		\item szybki dostęp do sąsiadów wierzchołka,
+		\item łatwe dodawanie i usuwanie krawędzi,
+		\item prostą implementację algorytmów przeszukiwania.
+	\end{itemize}
+	\begin{tcolorbox}[colback=black,colframe=gray!50!,arc=3mm,boxrule=0pt,left=0pt,right=0pt,width=\linewidth]
+		\textcolor{white}{\textbf{\textsf{Terminal}}}\\
+		
+		\begin{lstlisting}[language=Python]
+			class Graph:
+			def __init__(self, n):
+			self.n = n
+			self.adj = {i: set() for i in range(1, n + 1)}
+		\end{lstlisting}
+		
+	\end{tcolorbox}
+	
+	\newpage
+	\section*{\textcolor{blue}{Wizualizacja utworzonych grafów}}
+	\subsection*{\textcolor{blue}{Grafy hamiltonowskie nieskierowane dla nasycenia wynoszącego 30\%}}
+	
+	\begin{center}
+		\textbf{n = 20}\\[1ex]
+		\scalebox{0.47}{
+			\begin{tikzpicture}[>=stealth,shorten >=1pt,auto,node distance=3cm,thick]
+				\tikzstyle{every node}=[circle,draw,minimum size=8mm]
+				\node (1) at (5.00,0.00) {1};
+				\node (2) at (4.76,1.55) {2};
+				\node (3) at (4.05,2.94) {3};
+				\node (4) at (2.94,4.05) {4};
+				\node (5) at (1.55,4.76) {5};
+				\node (6) at (0.00,5.00) {6};
+				\node (7) at (-1.55,4.76) {7};
+				\node (8) at (-2.94,4.05) {8};
+				\node (9) at (-4.05,2.94) {9};
+				\node (10) at (-4.76,1.55) {10};
+				\node (11) at (-5.00,0.00) {11};
+				\node (12) at (-4.76,-1.55) {12};
+				\node (13) at (-4.05,-2.94) {13};
+				\node (14) at (-2.94,-4.05) {14};
+				\node (15) at (-1.55,-4.76) {15};
+				\node (16) at (-0.00,-5.00) {16};
+				\node (17) at (1.55,-4.76) {17};
+				\node (18) at (2.94,-4.05) {18};
+				\node (19) at (4.05,-2.94) {19};
+				\node (20) at (4.76,-1.55) {20};
+				\draw (6) -- (12); \draw (6) -- (15); \draw (3) -- (7); \draw (4) -- (6); \draw (3) -- (16);
+				\draw (4) -- (15); \draw (3) -- (19); \draw (9) -- (14); \draw (8) -- (18); \draw (2) -- (11);
+				\draw (2) -- (8); \draw (1) -- (12); \draw (13) -- (14); \draw (11) -- (20); \draw (13) -- (17);
+				\draw (2) -- (20); \draw (7) -- (10); \draw (6) -- (8); \draw (6) -- (14); \draw (7) -- (16);
+				\draw (7) -- (19); \draw (5) -- (6); \draw (4) -- (8); \draw (4) -- (14); \draw (3) -- (12);
+				\draw (4) -- (17); \draw (14) -- (15); \draw (9) -- (10); \draw (8) -- (14); \draw (1) -- (2);
+				\draw (9) -- (13); \draw (9) -- (19); \draw (10) -- (14); \draw (2) -- (10); \draw (1) -- (8);
+				\draw (8) -- (20); \draw (1) -- (20); \draw (10) -- (17); \draw (2) -- (19); \draw (6) -- (7);
+				\draw (6) -- (13); \draw (6) -- (10); \draw (15) -- (19); \draw (7) -- (15); \draw (3) -- (5);
+				\draw (3) -- (11); \draw (5) -- (11); \draw (4) -- (19); \draw (5) -- (14); \draw (8) -- (10);
+				\draw (10) -- (16); \draw (2) -- (6); \draw (2) -- (12); \draw (11) -- (15); \draw (11) -- (18);
+				\draw (16) -- (17);
+			\end{tikzpicture}
+		}
+	\end{center}
+	
+	\vspace{1em}
+	
+	\begin{center}
+		\textbf{n = 25}\\[1ex]
+		\scalebox{0.47}{
+			\begin{tikzpicture}[>=stealth,shorten >=1pt,auto,node distance=3cm,thick]
+				\tikzstyle{every node}=[circle,draw,minimum size=8mm]
+				\node (1) at (5.00,0.00) {1}; \node (2) at (4.84,1.24) {2}; \node (3) at (4.38,2.41) {3};
+				\node (4) at (3.64,3.42) {4}; \node (5) at (2.68,4.22) {5}; \node (6) at (1.55,4.76) {6};
+				\node (7) at (0.31,4.99) {7}; \node (8) at (-0.94,4.91) {8}; \node (9) at (-2.13,4.52) {9};
+				\node (10) at (-3.19,3.85) {10}; \node (11) at (-4.05,2.94) {11}; \node (12) at (-4.65,1.84) {12};
+				\node (13) at (-4.96,0.63) {13}; \node (14) at (-4.96,-0.63) {14}; \node (15) at (-4.65,-1.84) {15};
+				\node (16) at (-4.05,-2.94) {16}; \node (17) at (-3.19,-3.85) {17}; \node (18) at (-2.13,-4.52) {18};
+				\node (19) at (-0.94,-4.91) {19}; \node (20) at (0.31,-4.99) {20}; \node (21) at (1.55,-4.76) {21};
+				\node (22) at (2.68,-4.22) {22}; \node (23) at (3.64,-3.42) {23}; \node (24) at (4.38,-2.41) {24};
+				\node (25) at (4.84,-1.24) {25};
+				\draw (16)--(20); \draw (7)--(17); \draw (12)--(25); \draw (15)--(23); \draw (3)--(6); \draw (14)--(15);
+				\draw (2)--(4); \draw (1)--(8); \draw (1)--(17); \draw (18)--(21); \draw (20)--(24); \draw (14)--(17);
+				\draw (4)--(25); \draw (9)--(21); \draw (8)--(25); \draw (15)--(18); \draw (7)--(23); \draw (3)--(10);
+				\draw (21)--(25); \draw (5)--(25); \draw (10)--(15); \draw (2)--(20); \draw (5)--(9); \draw (22)--(25);
+				\draw (9)--(16); \draw (19)--(20); \draw (13)--(16); \draw (24)--(25); \draw (6)--(22); \draw (20)--(21);
+				\draw (3)--(14); \draw (3)--(23); \draw (1)--(22); \draw (2)--(15); \draw (20)--(23); \draw (14)--(16);
+				\draw (4)--(15); \draw (2)--(8); \draw (1)--(18); \draw (2)--(17); \draw (6)--(8); \draw (3)--(9);
+				\draw (5)--(6); \draw (4)--(8); \draw (20)--(25); \draw (12)--(21); \draw (14)--(18); \draw (21)--(24);
+				\draw (4)--(17); \draw (1)--(2); \draw (10)--(14); \draw (2)--(10); \draw (6)--(19); \draw (3)--(11);
+				\draw (4)--(19); \draw (8)--(10); \draw (17)--(22); \draw (10)--(16); \draw (1)--(13); \draw (11)--(24);
+				\draw (6)--(21); \draw (7)--(20); \draw (12)--(16); \draw (9)--(11); \draw (5)--(22); \draw (17)--(24);
+				\draw (19)--(21); \draw (11)--(17); \draw (6)--(23); \draw (16)--(25); \draw (4)--(5); \draw (5)--(15);
+				\draw (10)--(11); \draw (9)--(13); \draw (2)--(7); \draw (11)--(19); \draw (2)--(16); \draw (6)--(7);
+				\draw (13)--(22); \draw (4)--(7); \draw (21)--(23); \draw (10)--(13); \draw (9)--(15); \draw (11)--(12);
+				\draw (2)--(9); \draw (19)--(25); \draw (11)--(21); \draw (13)--(24);
+			\end{tikzpicture}
+		}
+	\end{center}
+	
+	\vspace{1em}
+	
+	\begin{center}
+		\textbf{n = 30}\\[1ex]
+		\scalebox{0.47}{
+			\begin{tikzpicture}[>=stealth,shorten >=1pt,auto,node distance=3cm,thick]
+				\tikzstyle{every node}=[circle,draw,minimum size=8mm]
+				
+				\node (1) at (5.00,0.00) {1};
+				\node (2) at (4.89,1.04) {2};
+				\node (3) at (4.57,2.03) {3};
+				\node (4) at (4.05,2.94) {4};
+				\node (5) at (3.35,3.72) {5};
+				\node (6) at (2.50,4.33) {6};
+				\node (7) at (1.55,4.76) {7};
+				\node (8) at (0.52,4.97) {8};
+				\node (9) at (-0.52,4.97) {9};
+				\node (10) at (-1.55,4.76) {10};
+				\node (11) at (-2.50,4.33) {11};
+				\node (12) at (-3.35,3.72) {12};
+				\node (13) at (-4.05,2.94) {13};
+				\node (14) at (-4.57,2.03) {14};
+				\node (15) at (-4.89,1.04) {15};
+				\node (16) at (-5.00,0.00) {16};
+				\node (17) at (-4.89,-1.04) {17};
+				\node (18) at (-4.57,-2.03) {18};
+				\node (19) at (-4.05,-2.94) {19};
+				\node (20) at (-3.35,-3.72) {20};
+				\node (21) at (-2.50,-4.33) {21};
+				\node (22) at (-1.55,-4.76) {22};
+				\node (23) at (-0.52,-4.97) {23};
+				\node (24) at (0.52,-4.97) {24};
+				\node (25) at (1.55,-4.76) {25};
+				\node (26) at (2.50,-4.33) {26};
+				\node (27) at (3.35,-3.72) {27};
+				\node (28) at (4.05,-2.94) {28};
+				\node (29) at (4.57,-2.03) {29};
+				\node (30) at (4.89,-1.04) {30};
+				
+				\draw (15)--(30); \draw (4)--(9); \draw (3)--(13); \draw (20)--(29); \draw (22)--(26);
+				\draw (12)--(25); \draw (3)--(22); \draw (5)--(19); \draw (8)--(18); \draw (2)--(11);
+				\draw (17)--(30); \draw (1)--(15); \draw (13)--(17); \draw (7)--(10); \draw (1)--(24);
+				\draw (7)--(19); \draw (20)--(22); \draw (12)--(27); \draw (2)--(4); \draw (5)--(30);
+				\draw (10)--(20); \draw (6)--(13); \draw (1)--(26); \draw (18)--(21); \draw (3)--(8);
+				\draw (3)--(26); \draw (1)--(10); \draw (8)--(25); \draw (10)--(22); \draw (15)--(18);
+				\draw (25)--(29); \draw (7)--(23); \draw (3)--(10); \draw (3)--(19); \draw (14)--(28);
+				\draw (1)--(3); \draw (13)--(14); \draw (1)--(30); \draw (12)--(15); \draw (20)--(28);
+				\draw (22)--(25); \draw (21)--(27); \draw (3)--(21); \draw (19)--(20); \draw (13)--(16);
+				\draw (8)--(29); \draw (10)--(26); \draw (19)--(29); \draw (3)--(5); \draw (6)--(22);
+				\draw (4)--(13); \draw (17)--(25); \draw (8)--(22); \draw (1)--(16); \draw (2)--(15);
+				\draw (9)--(30); \draw (11)--(27); \draw (2)--(24); \draw (6)--(15); \draw (15)--(27);
+				\draw (6)--(24); \draw (20)--(23); \draw (4)--(6); \draw (26)--(27); \draw (23)--(28);
+				\draw (3)--(25); \draw (17)--(18); \draw (8)--(15); \draw (2)--(8); \draw (17)--(27);
+				\draw (19)--(24); \draw (11)--(20); \draw (11)--(29); \draw (2)--(26); \draw (6)--(8);
+				\draw (15)--(20); \draw (15)--(29); \draw (26)--(29); \draw (12)--(21); \draw (4)--(17);
+				\draw (4)--(26); \draw (17)--(20); \draw (1)--(11); \draw (8)--(26); \draw (1)--(20);
+				\draw (11)--(22); \draw (2)--(19); \draw (6)--(10); \draw (13)--(25); \draw (15)--(22);
+				\draw (3)--(11); \draw (6)--(28); \draw (12)--(23); \draw (8)--(10); \draw (1)--(4);
+				\draw (2)--(3); \draw (8)--(19); \draw (10)--(16); \draw (1)--(13); \draw (9)--(18);
+				\draw (17)--(22); \draw (2)--(21); \draw (6)--(12); \draw (13)--(27); \draw (15)--(24);
+				\draw (6)--(21); \draw (22)--(29); \draw (9)--(11); \draw (11)--(17); \draw (8)--(30);
+				\draw (19)--(30); \draw (9)--(29); \draw (13)--(20); \draw (15)--(26); \draw (18)--(22);
+				\draw (5)--(15); \draw (10)--(11); \draw (2)--(7); \draw (9)--(22); \draw (1)--(29);
+				\draw (25)--(30); \draw (18)--(24); \draw (4)--(16); \draw (20)--(27); \draw (22)--(24);
+				\draw (17)--(19); \draw (2)--(9); \draw (9)--(24); \draw (2)--(18);
+			\end{tikzpicture}
+		}
+	\end{center}
+	\newpage
+	\subsection*{\textcolor{blue}{Grafy nie-hamiltonowskie nieskierowane dla nasycenia wynoszącego 50\%}}
+	
+	\begin{center}
+		\textbf{n = 20}\\[1ex]
+		\scalebox{0.47}{
+			\begin{tikzpicture}[>=stealth,shorten >=1pt,auto,node distance=3cm,thick]
+				\tikzstyle{every node}=[circle,draw,minimum size=8mm]
+				\node (1) at (5.00,0.00) {1};
+				\node (2) at (4.76,1.55) {2};
+				\node (3) at (4.05,2.94) {3};
+				\node (4) at (2.94,4.05) {4};
+				\node (5) at (1.55,4.76) {5};
+				\node (6) at (0.00,5.00) {6};
+				\node (7) at (-1.55,4.76) {7};
+				\node (8) at (-2.94,4.05) {8};
+				\node (9) at (-4.05,2.94) {9};
+				\node (10) at (-4.76,1.55) {10};
+				\node (11) at (-5.00,0.00) {11};
+				\node (12) at (-4.76,-1.55) {12};
+				\node (13) at (-4.05,-2.94) {13};
+				\node (14) at (-2.94,-4.05) {14};
+				\node (15) at (-1.55,-4.76) {15};
+				\node (16) at (-0.00,-5.00) {16};
+				\node (17) at (1.55,-4.76) {17};
+				\node (18) at (2.94,-4.05) {18};
+				\node (19) at (4.05,-2.94) {19};
+				\node (20) at (4.76,-1.55) {20};
+				
+				\draw (6) -- (18);
+				\draw (7) -- (17);
+				\draw (8) -- (9);
+				\draw (9) -- (17);
+				\draw (2) -- (11);
+				\draw (13) -- (17);
+				\draw (6) -- (11);
+				\draw (7) -- (10);
+				\draw (12) -- (18);
+				\draw (3) -- (15);
+				\draw (8) -- (11);
+				\draw (11) -- (16);
+				\draw (1) -- (8);
+				\draw (15) -- (16);
+				\draw (6) -- (13);
+				\draw (3) -- (17);
+				\draw (5) -- (14);
+				\draw (9) -- (12);
+				\draw (1) -- (10);
+				\draw (16) -- (17);
+				\draw (7) -- (14);
+				\draw (12) -- (13);
+				\draw (3) -- (10);
+				\draw (5) -- (16);
+				\draw (10) -- (15);
+				\draw (1) -- (12);
+				\draw (13) -- (14);
+				\draw (3) -- (12);
+				\draw (5) -- (9);
+				\draw (5) -- (18);
+				\draw (9) -- (16);
+				\draw (13) -- (16);
+				\draw (12) -- (17);
+				\draw (3) -- (14);
+				\draw (5) -- (11);
+				\draw (8) -- (13);
+				\draw (1) -- (7);
+				\draw (2) -- (6);
+				\draw (13) -- (18);
+				\draw (2) -- (15);
+				\draw (6) -- (15);
+				\draw (4) -- (6);
+				\draw (3) -- (16);
+				\draw (5) -- (13);
+				\draw (4) -- (15);
+				\draw (1) -- (9);
+				\draw (2) -- (8);
+				\draw (1) -- (18);
+				\draw (6) -- (8);
+				\draw (6) -- (17);
+				\draw (5) -- (6);
+				\draw (1) -- (11);
+				\draw (11) -- (13);
+				\draw (2) -- (10);
+				\draw (2) -- (19);
+				\draw (6) -- (10);
+				\draw (6) -- (19);
+				\draw (12) -- (14);
+				\draw (4) -- (10);
+				\draw (1) -- (4);
+				\draw (2) -- (3);
+				\draw (8) -- (19);
+				\draw (9) -- (18);
+				\draw (11) -- (15);
+				\draw (6) -- (12);
+				\draw (3) -- (4);
+				\draw (1) -- (6);
+				\draw (2) -- (5);
+				\draw (10) -- (18);
+				\draw (11) -- (17);
+				\draw (15) -- (17);
+				\draw (6) -- (14);
+				\draw (4) -- (14);
+				\draw (5) -- (15);
+				\draw (8) -- (14);
+				\draw (2) -- (16);
+				\draw (6) -- (7);
+				\draw (16) -- (18);
+				\draw (4) -- (7);
+				\draw (8) -- (16);
+				\draw (10) -- (13);
+				\draw (9) -- (15);
+				\draw (13) -- (15);
+			\end{tikzpicture}
+		}
+	\end{center}
+	
+	\vspace{1em}
+	
+	\begin{center}
+		\textbf{n = 25}\\[1ex]
+		\scalebox{0.47}{
+			\begin{tikzpicture}[>=stealth,shorten >=1pt,auto,node distance=3cm,thick]
+				\tikzstyle{every node}=[circle,draw,minimum size=8mm]
+				\node (1) at (5.00,0.00) {1};
+				\node (2) at (4.84,1.24) {2};
+				\node (3) at (4.38,2.41) {3};
+				\node (4) at (3.64,3.42) {4};
+				\node (5) at (2.68,4.22) {5};
+				\node (6) at (1.55,4.76) {6};
+				\node (7) at (0.31,4.99) {7};
+				\node (8) at (-0.94,4.91) {8};
+				\node (9) at (-2.13,4.52) {9};
+				\node (10) at (-3.19,3.85) {10};
+				\node (11) at (-4.05,2.94) {11};
+				\node (12) at (-4.65,1.84) {12};
+				\node (13) at (-4.96,0.63) {13};
+				\node (14) at (-4.96,-0.63) {14};
+				\node (15) at (-4.65,-1.84) {15};
+				\node (16) at (-4.05,-2.94) {16};
+				\node (17) at (-3.19,-3.85) {17};
+				\node (18) at (-2.13,-4.52) {18};
+				\node (19) at (-0.94,-4.91) {19};
+				\node (20) at (0.31,-4.99) {20};
+				\node (21) at (1.55,-4.76) {21};
+				\node (22) at (2.68,-4.22) {22};
+				\node (23) at (3.64,-3.42) {23};
+				\node (24) at (4.38,-2.41) {24};
+				\node (25) at (4.84,-1.24) {25};
+				
+				\draw (15) -- (21);
+				\draw (6) -- (18);
+				\draw (16) -- (20);
+				\draw (3) -- (13);
+				\draw (8) -- (9);
+				\draw (14) -- (22);
+				\draw (8) -- (18);
+				\draw (9) -- (17);
+				\draw (2) -- (11);
+				\draw (11) -- (23);
+				\draw (1) -- (15);
+				\draw (13) -- (17);
+				\draw (7) -- (10);
+				\draw (1) -- (24);
+				\draw (16) -- (22);
+				\draw (18) -- (19);
+				\draw (20) -- (22);
+				\draw (3) -- (24);
+				\draw (5) -- (21);
+				\draw (11) -- (16);
+				\draw (1) -- (17);
+				\draw (7) -- (12);
+				\draw (16) -- (24);
+				\draw (7) -- (21);
+				\draw (3) -- (8);
+				\draw (12) -- (20);
+				\draw (14) -- (17);
+				\draw (5) -- (14);
+				\draw (5) -- (23);
+				\draw (1) -- (10);
+				\draw (16) -- (17);
+				\draw (12) -- (13);
+				\draw (5) -- (7);
+				\draw (22) -- (23);
+				\draw (14) -- (19);
+				\draw (1) -- (3);
+				\draw (13) -- (14);
+				\draw (10) -- (24);
+				\draw (1) -- (21);
+				\draw (2) -- (20);
+				\draw (16) -- (19);
+				\draw (3) -- (12);
+				\draw (5) -- (9);
+				\draw (4) -- (11);
+				\draw (3) -- (21);
+				\draw (5) -- (18);
+				\draw (4) -- (20);
+				\draw (14) -- (21);
+				\draw (9) -- (16);
+				\draw (1) -- (5);
+				\draw (7) -- (9);
+				\draw (1) -- (23);
+				\draw (2) -- (22);
+				\draw (16) -- (21);
+				\draw (3) -- (5);
+				\draw (6) -- (22);
+				\draw (20) -- (21);
+				\draw (12) -- (17);
+				\draw (4) -- (13);
+				\draw (3) -- (23);
+				\draw (4) -- (22);
+				\draw (1) -- (7);
+				\draw (2) -- (6);
+				\draw (10) -- (19);
+				\draw (13) -- (18);
+				\draw (2) -- (15);
+				\draw (3) -- (7);
+				\draw (20) -- (23);
+				\draw (14) -- (16);
+				\draw (5) -- (13);
+				\draw (4) -- (15);
+				\draw (4) -- (24);
+				\draw (17) -- (18);
+				\draw (10) -- (12);
+				\draw (1) -- (9);
+				\draw (2) -- (8);
+				\draw (19) -- (24);
+				\draw (9) -- (23);
+				\draw (11) -- (20);
+				\draw (2) -- (17);
+				\draw (15) -- (20);
+				\draw (3) -- (9);
+				\draw (4) -- (8);
+				\draw (3) -- (18);
+				\draw (14) -- (18);
+				\draw (17) -- (20);
+				\draw (8) -- (17);
+				\draw (10) -- (14);
+				\draw (1) -- (11);
+				\draw (11) -- (13);
+				\draw (2) -- (10);
+				\draw (10) -- (23);
+				\draw (1) -- (20);
+				\draw (2) -- (19);
+				\draw (6) -- (10);
+				\draw (6) -- (19);
+				\draw (7) -- (18);
+				\draw (4) -- (10);
+				\draw (12) -- (23);
+				\draw (4) -- (19);
+				\draw (8) -- (19);
+				\draw (10) -- (16);
+				\draw (1) -- (13);
+				\draw (2) -- (12);
+				\draw (6) -- (12);
+				\draw (3) -- (4);
+				\draw (9) -- (11);
+				\draw (5) -- (22);
+				\draw (17) -- (24);
+				\draw (19) -- (21);
+				\draw (9) -- (20);
+				\draw (2) -- (14);
+				\draw (2) -- (23);
+				\draw (15) -- (17);
+				\draw (6) -- (23);
+				\draw (4) -- (5);
+				\draw (18) -- (22);
+				\draw (4) -- (14);
+				\draw (9) -- (13);
+				\draw (5) -- (24);
+				\draw (8) -- (23);
+				\draw (19) -- (23);
+				\draw (2) -- (16);
+				\draw (6) -- (16);
+				\draw (16) -- (18);
+				\draw (21) -- (23);
+				\draw (3) -- (20);
+				\draw (14) -- (20);
+				\draw (8) -- (16);
+				\draw (10) -- (13);
+				\draw (9) -- (15);
+				\draw (17) -- (19);
+				\draw (9) -- (24);
+				\draw (11) -- (21);
+				\draw (13) -- (15);
+				\draw (6) -- (9);
+				\draw (7) -- (8);
+				\draw (1) -- (22);
+			\end{tikzpicture}
+		}
+	\end{center}
+	
+	\vspace{1em}
+	
+	\begin{center}
+		\textbf{n = 30}\\[1ex]
+		\scalebox{0.47}{
+			\begin{tikzpicture}[>=stealth,shorten >=1pt,auto,node distance=3cm,thick]
+				\tikzstyle{every node}=[circle,draw,minimum size=8mm]
+				\node (1) at (5.00,0.00) {1};
+				\node (2) at (4.89,1.04) {2};
+				\node (3) at (4.57,2.03) {3};
+				\node (4) at (4.05,2.94) {4};
+				\node (5) at (3.35,3.72) {5};
+				\node (6) at (2.50,4.33) {6};
+				\node (7) at (1.55,4.76) {7};
+				\node (8) at (0.52,4.97) {8};
+				\node (9) at (-0.52,4.97) {9};
+				\node (10) at (-1.55,4.76) {10};
+				\node (11) at (-2.50,4.33) {11};
+				\node (12) at (-3.35,3.72) {12};
+				\node (13) at (-4.05,2.94) {13};
+				\node (14) at (-4.57,2.03) {14};
+				\node (15) at (-4.89,1.04) {15};
+				\node (16) at (-5.00,0.00) {16};
+				\node (17) at (-4.89,-1.04) {17};
+				\node (18) at (-4.57,-2.03) {18};
+				\node (19) at (-4.05,-2.94) {19};
+				\node (20) at (-3.35,-3.72) {20};
+				\node (21) at (-2.50,-4.33) {21};
+				\node (22) at (-1.55,-4.76) {22};
+				\node (23) at (-0.52,-4.97) {23};
+				\node (24) at (0.52,-4.97) {24};
+				\node (25) at (1.55,-4.76) {25};
+				\node (26) at (2.50,-4.33) {26};
+				\node (27) at (3.35,-3.72) {27};
+				\node (28) at (4.05,-2.94) {28};
+				\node (29) at (4.57,-2.03) {29};
+				\node (30) at (4.89,-1.04) {30};
+				
+				\draw (15) -- (21);
+				\draw (6) -- (18);
+				\draw (16) -- (20);
+				\draw (7) -- (17);
+				\draw (16) -- (29);
+				\draw (4) -- (9);
+				\draw (7) -- (26);
+				\draw (18) -- (26);
+				\draw (3) -- (13);
+				\draw (20) -- (29);
+				\draw (12) -- (25);
+				\draw (14) -- (22);
+				\draw (5) -- (19);
+				\draw (8) -- (18);
+				\draw (23) -- (25);
+				\draw (11) -- (14);
+				\draw (9) -- (26);
+				\draw (11) -- (23);
+				\draw (1) -- (15);
+				\draw (6) -- (11);
+				\draw (7) -- (10);
+				\draw (13) -- (26);
+				\draw (13) -- (24);
+				\draw (15) -- (23);
+				\draw (7) -- (19);
+				\draw (3) -- (6);
+				\draw (3) -- (15);
+				\draw (8) -- (11);
+				\draw (23) -- (27);
+				\draw (3) -- (24);
+				\draw (14) -- (24);
+				\draw (11) -- (16);
+				\draw (1) -- (8);
+				\draw (10) -- (20);
+				\draw (1) -- (17);
+				\draw (13) -- (19);
+				\draw (6) -- (13);
+				\draw (24) -- (28);
+				\draw (2) -- (25);
+				\draw (16) -- (24);
+				\draw (25) -- (27);
+				\draw (3) -- (8);
+				\draw (12) -- (20);
+				\draw (5) -- (14);
+				\draw (12) -- (29);
+				\draw (3) -- (26);
+				\draw (4) -- (25);
+				\draw (1) -- (10);
+				\draw (8) -- (25);
+				\draw (13) -- (21);
+				\draw (16) -- (17);
+				\draw (1) -- (28);
+				\draw (25) -- (29);
+				\draw (18) -- (23);
+				\draw (6) -- (27);
+				\draw (5) -- (7);
+				\draw (20) -- (26);
+				\draw (22) -- (23);
+				\draw (3) -- (19);
+				\draw (9) -- (14);
+				\draw (4) -- (27);
+				\draw (1) -- (3);
+				\draw (10) -- (15);
+				\draw (1) -- (12);
+				\draw (8) -- (27);
+				\draw (2) -- (20);
+				\draw (16) -- (19);
+				\draw (7) -- (16);
+				\draw (6) -- (29);
+				\draw (5) -- (9);
+				\draw (4) -- (11);
+				\draw (20) -- (28);
+				\draw (21) -- (27);
+				\draw (3) -- (21);
+				\draw (5) -- (18);
+				\draw (4) -- (20);
+				\draw (22) -- (25);
+				\draw (9) -- (16);
+				\draw (23) -- (24);
+				\draw (4) -- (29);
+				\draw (8) -- (20);
+				\draw (10) -- (17);
+				\draw (19) -- (20);
+				\draw (10) -- (26);
+				\draw (1) -- (23);
+				\draw (11) -- (25);
+				\draw (2) -- (22);
+				\draw (16) -- (21);
+				\draw (24) -- (25);
+				\draw (3) -- (5);
+				\draw (20) -- (21);
+				\draw (12) -- (17);
+				\draw (3) -- (14);
+				\draw (5) -- (11);
+				\draw (4) -- (13);
+				\draw (21) -- (29);
+				\draw (22) -- (27);
+				\draw (8) -- (13);
+				\draw (10) -- (19);
+				\draw (1) -- (16);
+				\draw (11) -- (18);
+				\draw (13) -- (18);
+				\draw (7) -- (11);
+				\draw (1) -- (25);
+				\draw (25) -- (26);
+				\draw (15) -- (27);
+				\draw (3) -- (7);
+				\draw (6) -- (24);
+				\draw (4) -- (6);
+				\draw (26) -- (27);
+				\draw (12) -- (19);
+				\draw (14) -- (16);
+				\draw (5) -- (13);
+				\draw (23) -- (28);
+				\draw (17) -- (18);
+				\draw (8) -- (15);
+				\draw (27) -- (28);
+				\draw (2) -- (8);
+				\draw (8) -- (24);
+				\draw (10) -- (21);
+				\draw (1) -- (18);
+				\draw (9) -- (23);
+				\draw (11) -- (20);
+				\draw (17) -- (27);
+				\draw (19) -- (24);
+				\draw (6) -- (8);
+				\draw (6) -- (17);
+				\draw (26) -- (29);
+				\draw (3) -- (9);
+				\draw (6) -- (26);
+				\draw (4) -- (8);
+				\draw (20) -- (25);
+				\draw (12) -- (21);
+				\draw (3) -- (18);
+				\draw (14) -- (18);
+				\draw (4) -- (17);
+				\draw (21) -- (24);
+				\draw (1) -- (2);
+				\draw (1) -- (11);
+				\draw (28) -- (29);
+				\draw (8) -- (26);
+				\draw (10) -- (23);
+				\draw (1) -- (20);
+				\draw (9) -- (25);
+				\draw (19) -- (26);
+				\draw (6) -- (10);
+				\draw (7) -- (18);
+				\draw (6) -- (28);
+				\draw (7) -- (27);
+				\draw (21) -- (26);
+				\draw (4) -- (28);
+				\draw (8) -- (10);
+				\draw (8) -- (19);
+				\draw (1) -- (13);
+				\draw (9) -- (18);
+				\draw (2) -- (12);
+				\draw (5) -- (29);
+				\draw (8) -- (28);
+				\draw (11) -- (15);
+				\draw (24) -- (27);
+				\draw (15) -- (24);
+				\draw (3) -- (4);
+				\draw (6) -- (21);
+				\draw (7) -- (29);
+				\draw (18) -- (29);
+				\draw (21) -- (28);
+				\draw (4) -- (21);
+				\draw (2) -- (5);
+				\draw (19) -- (21);
+				\draw (9) -- (20);
+				\draw (2) -- (14);
+				\draw (9) -- (29);
+				\draw (13) -- (20);
+				\draw (15) -- (17);
+				\draw (7) -- (13);
+				\draw (13) -- (29);
+				\draw (15) -- (26);
+				\draw (6) -- (23);
+				\draw (4) -- (14);
+				\draw (5) -- (15);
+				\draw (10) -- (11);
+				\draw (9) -- (13);
+				\draw (14) -- (27);
+				\draw (2) -- (7);
+				\draw (2) -- (16);
+				\draw (11) -- (28);
+				\draw (13) -- (22);
+				\draw (15) -- (19);
+				\draw (7) -- (15);
+				\draw (26) -- (28);
+				\draw (6) -- (25);
+				\draw (16) -- (27);
+				\draw (4) -- (7);
+				\draw (7) -- (24);
+				\draw (21) -- (23);
+				\draw (4) -- (16);
+				\draw (3) -- (20);
+				\draw (17) -- (19);
+				\draw (14) -- (29);
+				\draw (2) -- (9);
+				\draw (5) -- (26);
+				\draw (11) -- (21);
+				\draw (2) -- (18);
+				\draw (1) -- (22);
+			\end{tikzpicture}
+		}
+	\end{center}
+	
 	
 	
 	\section*{\textcolor{blue}{Porównanie czasów wykonania}}
