@@ -1,21 +1,7 @@
 import time
 import csv
 import random
-import signal
-import sys
-sys.setrecursionlimit(100000)
 
-
-# -------- Timeout support --------
-class TimeoutException(Exception):
-    pass
-
-def timeout_handler(signum, frame):
-    raise TimeoutException
-
-signal.signal(signal.SIGALRM, timeout_handler)
-
-# -------- Graph class --------
 class Graph:
     def __init__(self, n):
         self.n = n
@@ -36,14 +22,17 @@ class Graph:
         nodes = list(range(1, self.n + 1))
         random.shuffle(nodes)
         for i in range(self.n):
-            self.add_edge(nodes[i], nodes[(i + 1) % self.n])
+            self.add_edge(nodes[i], nodes[(i + 1) % self.n])  # utwórz cykl Hamiltona
+
         target_edges = int(self.max_edges() * (saturation_percent / 100))
+
         while self.edge_count() + 3 <= target_edges:
             u, v, w = random.sample(range(1, self.n + 1), 3)
             if v not in self.adj[u] and w not in self.adj[v] and u not in self.adj[w]:
                 self.add_edge(u, v)
                 self.add_edge(v, w)
                 self.add_edge(w, u)
+
         for node in range(1, self.n + 1):
             if len(self.adj[node]) % 2 != 0:
                 for other in range(1, self.n + 1):
@@ -52,7 +41,8 @@ class Graph:
                         break
 
     def generate_non_hamiltonian_graph(self):
-        self.generate_hamiltonian_graph(50)
+        self.generate_hamiltonian_graph(saturation_percent=50)
+        # Izoluj ostatni wierzchołek
         isolated = self.n
         for neighbor in list(self.adj[isolated]):
             self.adj[neighbor].remove(isolated)
@@ -102,59 +92,57 @@ class Graph:
                 return path + [start]
         return None
 
-# -------- Measurement helpers --------
-def timed_execution(func, timeout=5):
-    try:
-        signal.alarm(timeout)
-        start = time.perf_counter()
-        func()
-        elapsed = time.perf_counter() - start
-        signal.alarm(0)
-        return round(elapsed, 5)
-    except TimeoutException:
-        return "timeout"
-
-def measure_time_hamiltonian(n_values, saturation):
-    euler_times = []
-    hamilton_times = []
-    for n in n_values:
-        g = Graph(n)
-        g.generate_hamiltonian_graph(saturation)
-        print(f"Hamiltonian graph n={n}")
-        euler_time = timed_execution(g.find_euler_cycle)
-        hamilton_time = timed_execution(g.find_hamilton_cycle)
-        euler_times.append((n, euler_time))
-        hamilton_times.append((n, hamilton_time))
-    return euler_times, hamilton_times
-
-def measure_time_non_hamiltonian(n_values):
-    hamilton_times = []
-    for n in n_values:
-        g = Graph(n)
-        g.generate_non_hamiltonian_graph()
-        print(f"Non-Hamiltonian graph n={n}")
-        hamilton_time = timed_execution(g.find_hamilton_cycle)
-        hamilton_times.append((n, hamilton_time))
-    return hamilton_times
-
-def export_to_csv(filename, data):
-    with open(filename, mode='w', newline='') as f:
-        writer = csv.writer(f)
-        writer.writerow(["n", "time"])
+def save_to_csv(filename, data):
+    print(f"Zapisuję dane do pliku: {filename}")
+    with open(filename, mode='w', newline='') as file:
+        writer = csv.writer(file)
+        writer.writerow(['nodes', 'time'])
         writer.writerows(data)
 
-# -------- Main benchmark logic --------
+def benchmark():
+    n_values_ham = [10, 12, 14, 16, 18, 20, 22, 24]
+    n_values_nonham = [20, 22, 24, 26, 28, 30]
+    saturation_ham = 30
+    saturation_nonham = 50
+
+    euler_times = []
+    hamilton_times = []
+    nonham_hamilton_times = []
+
+    for n in n_values_ham:
+        print(f"\n[Hamilton] Tworzenie grafu Hamiltonowskiego z n={n}, nasycenie={saturation_ham}%")
+        g = Graph(n)
+        g.generate_hamiltonian_graph(saturation_ham)
+
+        print("  - Pomiar czasu cyklu Eulera...")
+        start = time.perf_counter()
+        _ = g.find_euler_cycle()
+        elapsed = time.perf_counter() - start
+        euler_times.append((n, elapsed))
+
+        print("  - Pomiar czasu cyklu Hamiltona...")
+        start = time.perf_counter()
+        _ = g.find_hamilton_cycle()
+        elapsed = time.perf_counter() - start
+        hamilton_times.append((n, elapsed))
+
+    for n in n_values_nonham:
+        print(f"\n[Non-Hamilton] Tworzenie grafu NIE-hamiltonowskiego z n={n}, nasycenie={saturation_nonham}%")
+        g = Graph(n)
+        g.generate_non_hamiltonian_graph()
+
+        print("  - Pomiar czasu cyklu Hamiltona (dla grafu niehamiltonowskiego)...")
+        start = time.perf_counter()
+        _ = g.find_hamilton_cycle()
+        elapsed = time.perf_counter() - start
+        nonham_hamilton_times.append((n, elapsed))
+
+    # Zapis do plików CSV
+    save_to_csv('euler_times.csv', euler_times)
+    save_to_csv('hamilton_times.csv', hamilton_times)
+    save_to_csv('nonham_hamilton_times.csv', nonham_hamilton_times)
+
+    print("\nBenchmark zakończony.")
+
 if __name__ == "__main__":
-    print("Benchmark start...\n")
-    n_hamiltonian = [2**k for k in range(5, 11)]   # 10, 15, ..., 30
-    n_non_hamiltonian = list(range(20, 31, 2))
-
-    euler_data, hamilton_data = measure_time_hamiltonian(n_hamiltonian, 30)
-    non_hamilton_data = measure_time_non_hamiltonian(n_non_hamiltonian)
-
-    export_to_csv("euler_times.csv", euler_data)
-    export_to_csv("hamilton_times.csv", hamilton_data)
-    export_to_csv("non_hamilton_times.csv", non_hamilton_data)
-
-    print("\nBenchmark complete.")
-    print("Pliki zapisane: euler_times.csv, hamilton_times.csv, non_hamilton_times.csv")
+    benchmark()
