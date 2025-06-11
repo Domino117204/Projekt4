@@ -23,7 +23,7 @@
 
 
 \pgfplotsset{
-	width=10cm, height=6cm, ymin=0, xmin=50, xmax=200, grid=both,
+	width=10cm, height=6cm, ymin=0, xmin=15, xmax=35, grid=both,
 	xticklabel style={rotate=45, anchor=near xticklabel},
 	x label style={at={(axis description cs:0.5,-0.025)}},
 }
@@ -824,8 +824,6 @@
 		}
 	\end{center}
 	
-	
-	
 	\section*{\textcolor{blue}{Porównanie czasów wykonania}}
 	\begin{figure}[H]
 		\centering
@@ -836,7 +834,6 @@
 					width=10cm, height=4cm,
 					title={Złożoność Obliczeniowa znajdowania cyklu}, 
 					xlabel={Rozmiar instancji}, ylabel={Czas (ms)}, legend pos=north west,
-					xmode=log, log basis x={2},
 					every axis plot post/.style={very thick},
 					]
 					\addplot[red, dashed, smooth] table[x=n,y=time,col sep=comma] {results/czasy_euler.csv};
@@ -865,9 +862,11 @@
 	Na podstawie przedstawionych wykresów można wyciągnąć następujące wnioski:
 	
 	\begin{itemize}
-		\item Algorytm znajdowania cyklu Eulera działa bardzo efektywnie – jego czas wykonania jest praktycznie zerowy niezależnie od rozmiaru instancji. Jest to zgodne z teorią, ponieważ problem znajdowania cyklu Eulera należy do klasy P i może być rozwiązany w czasie liniowym względem liczby krawędzi.
+		\item Metoda Eulera jest bardziej efektywna czasowo niż metoda Hamiltona – w pierwszym wykresie widać, że czas znajdowania cyklu dla metody Eulera jest znacznie niższy niż dla metody Hamiltona, szczególnie przy większych rozmiarach instancji.
 		
-		\item Algorytm znajdowania cyklu Hamiltona wykazuje znacznie większą złożoność czasową. Czas wykonania silnie zależy od rozmiaru instancji i waha się w sposób nieregularny, co jest charakterystyczne dla problemów NP-trudnych. Dla większych instancji czas rośnie dynamicznie, co potwierdza jego praktyczną nieefektywność.
+		
+		\item Wzrost rozmiaru instancji znacząco wpływa na wydajność metody Hamiltona – dla większych instancji czas działania tej metody rośnie, co wskazuje na jej większą złożoność obliczeniową.
+		
 		
 		\item W przypadku grafu nie-hamiltonowskiego, czas wykonania pozostaje stały niezależnie od rozmiaru instancji, co może oznaczać wcześniejsze zakończenie algorytmu po stwierdzeniu braku ścieżki Hamiltona.
 	\end{itemize}
